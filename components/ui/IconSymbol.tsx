@@ -1,43 +1,55 @@
-// This file is a fallback for using MaterialIcons on Android and web.
-
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight } from 'expo-symbols';
 import React from 'react';
-import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
+import { OpaqueColorValue } from 'react-native';
+import {
+  ArrowRightIcon,
+  HomeIcon,
+  FolderIcon,
+  PlusCircleIcon,
+  PaperAirplaneIcon,
+  CodeBracketIcon,
+  GlobeAmericasIcon,
+  MagnifyingGlassIcon,
+  DocumentIcon,
+  UserCircleIcon,
+  LockClosedIcon,
+  CheckCircleIcon,
+} from "react-native-heroicons/outline"; // Import desired icons
 
-// Add your SFSymbol to MaterialIcons mappings here.
-const MAPPING = {
-  // See MaterialIcons here: https://icons.expo.fyi
-  // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-} as Partial<
-  Record<
-    import('expo-symbols').SymbolViewProps['name'],
-    React.ComponentProps<typeof MaterialIcons>['name']
-  >
->;
+const HEROICONS_MAPPING = {
+  'house.fill': HomeIcon,
+  'folder': FolderIcon,
+  'plus.square.on.square': PlusCircleIcon,
+  'paperplane.fill': PaperAirplaneIcon,
+  'chevron.left.forwardslash.chevron.right': CodeBracketIcon,
+  'chevron.right': ArrowRightIcon,
+  'globe': GlobeAmericasIcon,
+  'magnifyingglass': MagnifyingGlassIcon,
+  'doc': DocumentIcon,
+  'person.crop.circle': UserCircleIcon,
+  'lock': LockClosedIcon,
+  'checkmark.circle': CheckCircleIcon
 
-export type IconSymbolName = keyof typeof MAPPING;
+} as const;
 
-/**
- * An icon component that uses native SFSymbols on iOS, and MaterialIcons on Android and web. This ensures a consistent look across platforms, and optimal resource usage.
- *
- * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons.
- */
+export type IconSymbolName = keyof typeof HEROICONS_MAPPING;
+
 export function IconSymbol({
   name,
   size = 24,
-  color,
+  color = "black",
   style,
 }: {
   name: IconSymbolName;
   size?: number;
-  color: string | OpaqueColorValue;
+  color?: string | OpaqueColorValue;
   style?: StyleProp<ViewStyle>;
-  weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const HeroIcon = HEROICONS_MAPPING[name];
+  if (!HeroIcon) {
+    console.warn(`Icon "${name}" not found in HEROICONS_MAPPING.`);
+    return null;
+  }
+
+  return <HeroIcon width={size} height={size} color={color} style={style} />;
 }

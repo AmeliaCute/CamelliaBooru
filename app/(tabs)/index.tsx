@@ -1,56 +1,94 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, View, FlatList, ViewToken, ListRenderItemInfo } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Home_Header } from '@/components/Amoops/Pages/Home/Header';
+import { useCallback, useEffect, useRef, useState} from 'react';
+import Globals from '@/constants/Globals';
+import { Content } from '@/modules/Content';
+import { Post } from '@/components/Amoops/Pages/Home/Post';
+import { ThemedText } from '@/components/ThemedText';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import { Server } from '@/modules/Server';
+
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
+  const [posts, setPosts] = useState<Content[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [viewablePost, setViewablePost] = useState(new Set<string>());
+  const flatListRef = useRef<FlatList<Content>>(null);
+  
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener('tabPress' as any, () => {
+        scrollToTop();
+      });
+
+      return unsubscribe;
+    }, [navigation])
+  );
+
+  const fetchPosts = async () => {
+    if(isLoading) return;
+    setIsLoading(true);
+    try {
+      const server = Globals.currentServer;
+      if (server) {
+        const fetchedPosts = await server.gelbooru_getLatestsPosts(5);
+        setPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch posts:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  function ResetPostData() {
+    setPosts([]);
+  }
+
+  const handleServerChange = useCallback((newServer: Server) => {
+    if (Globals.currentServer !== newServer) {
+      Globals.currentServer = newServer;
+      ResetPostData();
+    }
+  }, []);
+ 
+
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const visibleItemIds = new Set(viewableItems.map((item) => (item.item as Content).id));
+      setViewablePost(visibleItemIds);
+    },
+    []
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ThemedView style={{backgroundColor: "#A670DCFF"}}>
+      <FlatList
+        ref={flatListRef}
+        data={posts}
+
+        renderItem={({ item }) => <Post post={item} isInView={viewablePost.has(item.id)} />}
+        keyExtractor={(item) => `${item.id}-${item.curl}`}
+
+        onEndReached={fetchPosts}
+        onEndReachedThreshold={0.8}
+
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
+
+        ListHeaderComponent={<Home_Header onServerChange={handleServerChange}/>}
+        ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
+
+        showsVerticalScrollIndicator={false}
+      />
+    </ThemedView>
   );
 }
 
@@ -72,3 +110,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
+
+
