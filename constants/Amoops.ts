@@ -32,6 +32,6 @@ export interface GelBooruPost {
 
     rating: string;
     tags: string;
-    change: string;
+    change: number;
 
 }

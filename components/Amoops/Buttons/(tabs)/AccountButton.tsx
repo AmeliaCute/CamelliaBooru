@@ -1,20 +1,21 @@
-import { Image, TouchableOpacity, View, StyleSheet, Text, type ViewProps } from 'react-native';
-
+import { TouchableOpacity, View, Text, Image, StyleSheet, type ViewProps } from 'react-native';
 import { ImageSourcePropType } from 'react-native';
+import { BaseButtonProps } from '../Common/BaseButton';
 
-export type AccountButtonProps = ViewProps & {
-    code?: () => void;
+export type AccountButtonProps = BaseButtonProps & {
     accountName?: string;
     accountImage?: ImageSourcePropType;
 };
 
 export function AccountButton({ style, code, accountName, accountImage, ...otherProps }: AccountButtonProps) {
-    return <TouchableOpacity onPress={code} style={{height: 45}}>
-        <View style={styles.container}>
-            <Image source={accountImage} style={styles.profileImage} />
-            <Text style={styles.text}>{accountName}</Text>
-        </View>
-    </TouchableOpacity>
+    return (
+        <TouchableOpacity onPress={code} style={{ height: 45 }}>
+            <View style={styles.container}>
+                <Image source={accountImage} style={styles.profileImage} />
+                <Text style={styles.text}>{accountName}</Text>
+            </View>
+        </TouchableOpacity>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
         borderRadius: 60,
     },
     text: {
-        color: "#000", 
+        color: "#000",
         fontFamily: 'Comfortaa',
         fontWeight: '900',
     },

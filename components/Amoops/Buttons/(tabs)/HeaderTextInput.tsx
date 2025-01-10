@@ -1,12 +1,11 @@
 import { Button, TouchableOpacity, View, StyleSheet, Text, type ViewProps, TextInput, TextInputProps } from 'react-native';
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { useState } from 'react';
-import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextInputProps = TextInputProps & {
     code?: () => void;
-    icon?: string;
+    icon?: IconSymbolName;
     title?: string;
     outlineWidth?: number
     shadowOpacity?: number
@@ -18,7 +17,7 @@ export type ThemedTextInputProps = TextInputProps & {
     onSearch?: (query: string) => void;
 };
 
-export function HeaderTextInput({ style, code, icon, title, outlineWidth, themeColor, themeColorText, themeColorOutline, shadowOpacity, onSearch, ...otherProps }: ThemedTextInputProps) {
+export function HeaderTextInput({ style, code, icon = 'folder', title, outlineWidth, themeColor, themeColorText, themeColorOutline, shadowOpacity, onSearch = () => {}, ...otherProps }: ThemedTextInputProps) {
     const [text, setText] = useState('');
 
     return (
@@ -30,7 +29,9 @@ export function HeaderTextInput({ style, code, icon, title, outlineWidth, themeC
                 placeholderTextColor={"#FFF"}
                 value={text}
                 onChangeText={setText}
-                onEndEditing={() => onSearch && onSearch(text)}
+                onEndEditing={() => onSearch(text)}
+                autoCorrect={false}
+                autoComplete='off'
             />
         </View>
     );

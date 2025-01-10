@@ -9,6 +9,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import { Server } from '@/modules/Server';
 import { Explore_Header } from '@/components/Amoops/Pages/Explore/Header';
+import { observer } from 'mobx-react';
+
+const ObservedExploreHeader = observer(Explore_Header);
 
 
 export default function ExploreScreen() {
@@ -17,7 +20,6 @@ export default function ExploreScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [viewablePost, setViewablePost] = useState(new Set<string>());
   const flatListRef = useRef<FlatList<Content>>(null);
-  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   
   useFocusEffect(
@@ -30,17 +32,20 @@ export default function ExploreScreen() {
     }, [navigation])
   );
 
-  const fetchPosts = async (query: string) => {
-    if(isLoading) return;
+  const fetchPosts = async (query: string, force = false) => {
+    if(isLoading && !force) return;
     setIsLoading(true);
     try {
       const server = Globals.currentServer;
       if (server) {
+        console.log("Query: ", query);
         const fetchedPosts = await server.gelbooru_searchPosts(query, 5);
+        if(fetchedPosts === undefined) return;
+
         setPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
       }
     } catch (error) {
-      console.error('Failed to fetch posts:', error);
+      console.error('AAAAA Failed to fetch posts:', error);
     } finally {
       setIsLoading(false);
     }
@@ -66,63 +71,53 @@ export default function ExploreScreen() {
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       const visibleItemIds = new Set(viewableItems.map((item) => (item.item as Content).id));
       setViewablePost(visibleItemIds);
-
-      // Pause all videos except the one that is currently in view
-      if (viewableItems.length > 0) {
-        const firstVisibleItem = viewableItems[0].item as Content;
-        if (firstVisibleItem.id !== playingVideoId) {
-          setPlayingVideoId(firstVisibleItem.id);
-        }
-      }
     },
-    [playingVideoId]
+    []
   );
 
-  const handleSearch = (query: string) => {
-    setQuery(query);
+  const handleSearch = async (nquery: string) => {
+    Globals.currentServer.gelbooru_explore_offset = 0;
+    setQuery(nquery);
+    setIsLoading(true);
+
     ResetPostData();
+    await fetchPosts(nquery, true);
+
+    setIsLoading(false);
   };
 
 
   return (
     <ThemedView style={{backgroundColor: "#A670DCFF"}}>
       <FlatList
-        ref={flatListRef}
-        data={posts}
+      ref={flatListRef}
+      data={posts}
 
-        renderItem={({ item }) => <Post post={item} isInView={viewablePost.has(item.id)} />}
-        keyExtractor={(item) => `${item.id}-${item.curl}`}
+      renderItem={({ item }) => <Post post={item} isInView={viewablePost.has(item.id)} />}
+      keyExtractor={(item) => `${item.id}-${item.curl}`}
 
-        onEndReached={() => fetchPosts(query)}
-        onEndReachedThreshold={0.8}
+      viewabilityConfig={{
+        itemVisiblePercentThreshold: 80,
+        minimumViewTime: 300,
+        waitForInteraction: true,
+      }}
 
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
+      onEndReached={() => {fetchPosts(query)}}
+      onEndReachedThreshold={0.8}
 
-        ListHeaderComponent={<Explore_Header onServerChange={handleServerChange} onSearch={handleSearch}/>}
-        ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
+      onViewableItemsChanged={({ viewableItems, changed }) => {
+        const centerIndex = Math.floor(viewableItems.length / 2);
+        const centerItem = viewableItems[centerIndex];
+        if (centerItem) {
+        setViewablePost(new Set([centerItem.item.id]));
+        }
+      }}
+      ListHeaderComponent={() => <ObservedExploreHeader onServerChange={handleServerChange} onSearch={handleSearch} />}
 
-        showsVerticalScrollIndicator={false}
+      ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
+
+      showsVerticalScrollIndicator={false}
       />
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

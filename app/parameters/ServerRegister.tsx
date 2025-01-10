@@ -5,88 +5,80 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { HeartIcon } from "react-native-heroicons/outline";
 
 export default function ServerRegister() {
     return (
-        <ThemedView style={styles.container}>
+        <ThemedView style={styles.formcontainer}>
             <ThemedTextInput 
+                style={{marginTop: 40}}
                 icon="globe"
                 title="Server Url"
                 outlineWidth={3} 
                 
                 shadowOpacity={1}
-                themeColor={"textInputBoxImportant"} 
-                themeColorText={"textInputColorImportant"} 
-                themeColorOutline={"textInputOutlineImportant"}    
+                colorPreset='Important'
             />
-           <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-            >
-            <ThemedView style={styles.optional}>
-                <View style={styles.optionalTextContainer}>
-                    <IconSymbol name={"magnifyingglass"} size={24} color={useThemeColor({}, 'textInputColorNormal')}/>
-                    <Text style={[styles.optionalText, {color: useThemeColor({}, 'textInputColorNormal')}]}>Optional</Text>
-                </View>
-                <ThemedTextInput 
-                    style={{marginBottom: 10}}
-                    icon="doc"
-                    title="Name"
-                    outlineWidth={2} 
+            <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                >
+                <ThemedView style={styles.optional}>
+                    <View style={styles.optionalTextContainer}>
+                        <IconSymbol name={"magnifyingglass"} size={24} color={useThemeColor({}, 'textInputColorNormal')}/>
+                        <Text style={[styles.optionalText, {color: useThemeColor({}, 'textInputColorNormal')}]}>Optional</Text>
+                    </View>
+                    <ThemedTextInput 
+                        icon="doc"
+                        title="Name"
+                        outlineWidth={2} 
 
-                    themeColor={"textInputBoxNormal"} 
-                    themeColorText={"textInputColorNormal"} 
-                    themeColorOutline={"textInputOutlineNormal"}    
-                />
+                        colorPreset='Normal'  
+                    />
 
-                <ThemedTextInput 
-                    icon="person.crop.circle"
-                    title="User ID"
-                    outlineWidth={2} 
+                    <ThemedTextInput 
+                        icon="person.crop.circle"
+                        title="User ID"
+                        outlineWidth={2} 
 
-                    themeColor={"textInputBoxNormal"} 
-                    themeColorText={"textInputColorNormal"} 
-                    themeColorOutline={"textInputOutlineNormal"}    
-                />
+                        colorPreset='Normal'  
+                    />
 
-                <ThemedTextInput 
-                    icon="lock"
-                    title="API secret"
-                    outlineWidth={2} 
+                    <ThemedTextInput 
+                        icon="lock"
+                        title="API secret"
+                        outlineWidth={2} 
 
-                    themeColor={"textInputBoxNormal"} 
-                    themeColorText={"textInputColorNormal"} 
-                    themeColorOutline={"textInputOutlineNormal"}    
-                />
+                        colorPreset='Normal'     
+                    />
 
+                    
+                </ThemedView>
+            </KeyboardAvoidingView>
                 
-            </ThemedView>
-        </KeyboardAvoidingView>
-            
-        <ThemedParameterButton 
-            style={{marginTop: 60}}
-            outlineWidth={2} 
-            themeColor={"textInputBoxImportant"} 
-            themeColorText={"textInputColorImportant"} 
-            themeColorOutline={"textInputOutlineImportant"}
-            title="Register Server"
-            icon="checkmark.circle"
-        />
+            <ThemedParameterButton 
+                outlineWidth={2} 
+                colorPreset='Important'
+                title="Register Server"
+                icon="checkmark.circle"
+            />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    formcontainer: {
         flex: 1,
         display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingVertical: 60,
-        paddingHorizontal: 40,
-        gap: 50,
+        paddingHorizontal: 20,
+        gap: 40,
     },
     optional: {
+        width: '100%',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
         gap: 10
     },
     optionalTextContainer: {
@@ -100,6 +92,4 @@ const styles = StyleSheet.create({
         fontFamily: 'Comfortaa',
         fontWeight: '800',
     }
-
-
 });

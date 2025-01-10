@@ -11,12 +11,6 @@ import Globals from '@/constants/Globals';
 import { Server } from '@/modules/Server';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// i beg u please us safe booru and not pornographic booru server
-const server: Server[] = [
-  new Server('gelbooru', 'Safebooru', 'https://safebooru.org'),
-]
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -24,19 +18,19 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Comfortaa: require('../assets/fonts/Comfortaa.ttf'),
   });
+
   const [isServerLoaded, setIsServerLoaded] = useState(false);
   
-  Globals.server = server;
-  // load server 
   useEffect(() => {
     const loadServers = async () => {
       try {
-        await Promise.all(Globals.server.map(s => s.load()));
-
-        if(Globals.server.length > 0)
-          Globals.currentServer = Globals.server[0];
-
-        console.log("Default server: ", Globals.currentServer.name)
+        console.log('Loading servers... [from app root]');
+        await Globals.loadServers();
+        await Promise.all(Globals.server.map(async s => await s.load()));
+        if(Globals.server.length === 0) {
+          console.error('No servers found.');
+          return;
+        }
 
         setIsServerLoaded(true);
       } catch (error) {
@@ -54,15 +48,19 @@ export default function RootLayout() {
   }, [loaded, isServerLoaded]);
 
   if (!loaded || !isServerLoaded) {
+    console.log("Loading...");
     return null;
   }
 
   return (
+
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="parameters" options={{ headerShown: false }} />
+          <Stack.Screen name="focus" options={{ headerShown: false }} />
+
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

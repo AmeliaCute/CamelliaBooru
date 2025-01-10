@@ -1,25 +1,19 @@
-import { Button, TouchableOpacity, View, StyleSheet, Text, type ViewProps, TextInput } from 'react-native';
+import { IconSymbol, IconSymbolName } from "@/components/ui/IconSymbol";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { TouchableOpacity, ViewProps, Text, StyleSheet } from "react-native";
+import { BaseButtonProps } from "../Common/BaseButton";
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useThemeColor } from '@/hooks/useThemeColor';
+export type CategoriesButtonProps = BaseButtonProps & {
+    outlineWidth?: number;
+    shadowOpacity?: number;
 
-export type CategoriesButtonProps = ViewProps & {
-    code?: () => void;
-    icon?: string;
-    title?: string;
-    outlineWidth?: number
-    shadowOpacity?: number
-
-    themeColor: string
-    themeColorText: string
-    themeColorOutline: string
-
+    colorPreset: 'Important' | 'Normal';
 };
 
-export function ThemedParameterButton({ style, code, icon, title, outlineWidth, themeColor, themeColorText, themeColorOutline, shadowOpacity, ...otherProps }: CategoriesButtonProps) {
-    const color = useThemeColor({}, themeColor);
-    const textColor = useThemeColor({}, themeColorText);
-    const outlineColor = useThemeColor({}, themeColorOutline);
+export function ThemedParameterButton({ style, code, icon = 'folder', title, outlineWidth, colorPreset, shadowOpacity, ...otherProps }: CategoriesButtonProps) {
+    const color = useThemeColor({}, `textInputBox${colorPreset}`);
+    const textColor = useThemeColor({}, `textInputColor${colorPreset}`);
+    const outlineColor = useThemeColor({}, `textInputOutline${colorPreset}`);
 
     return (
         <TouchableOpacity style={[styles.container, style, {
@@ -32,11 +26,10 @@ export function ThemedParameterButton({ style, code, icon, title, outlineWidth, 
             shadowRadius: 0,
             shadowOpacity: shadowOpacity || 0
         }]}>
-            <IconSymbol name={icon} size={30} color={textColor}/>
+            <IconSymbol name={icon as IconSymbolName} size={30} color={textColor}/>
             <Text style={[styles.text, {color: textColor}]}> {title} </Text>
         </TouchableOpacity>
     );
-    
 }
 
 const styles = StyleSheet.create({
@@ -48,8 +41,9 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         borderRadius: 16,
-        height: 60,
-        maxHeight: 60
+        minHeight: 60,
+        maxHeight: 60,
+        overflow: 'scroll', 
     },
     text: {
         width: "100%",

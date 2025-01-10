@@ -9,7 +9,9 @@ import { Post } from '@/components/Amoops/Pages/Home/Post';
 import { ThemedText } from '@/components/ThemedText';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import { Server } from '@/modules/Server';
+import { observer } from 'mobx-react';
 
+const ObservedHomeHeader = observer(Home_Header);
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -30,6 +32,7 @@ export default function HomeScreen() {
 
   const fetchPosts = async () => {
     if(isLoading) return;
+    
     setIsLoading(true);
     try {
       const server = Globals.currentServer;
@@ -83,7 +86,7 @@ export default function HomeScreen() {
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
 
-        ListHeaderComponent={<Home_Header onServerChange={handleServerChange}/>}
+        ListHeaderComponent={<ObservedHomeHeader onServerChange={handleServerChange}/>}
         ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
 
         showsVerticalScrollIndicator={false}
@@ -91,24 +94,5 @@ export default function HomeScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
 
 

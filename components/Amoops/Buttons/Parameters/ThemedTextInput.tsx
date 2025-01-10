@@ -1,32 +1,32 @@
 import { Button, TouchableOpacity, View, StyleSheet, Text, type ViewProps, TextInput, TextInputProps } from 'react-native';
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { useState } from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextInputProps = TextInputProps & {
+    style?: ViewProps['style'];
     code?: () => void;
-    icon?: string;
+    icon?: IconSymbolName;
     title?: string;
     outlineWidth?: number
     shadowOpacity?: number
 
-    themeColor: string
-    themeColorText: string
-    themeColorOutline: string
+    colorPreset: 'Important' | 'Normal';
 
     onSearch?: (query: string) => void;
 };
 
-export function ThemedTextInput({ style, code, icon, title, outlineWidth, themeColor, themeColorText, themeColorOutline, shadowOpacity, onSearch, ...otherProps }: ThemedTextInputProps) {
+export function ThemedTextInput({ style, code, icon = 'folder', title, outlineWidth, colorPreset, shadowOpacity, onSearch, ...otherProps }: ThemedTextInputProps) {
     const [text, setText] = useState('');
+    
+    const color = useThemeColor({}, `textInputBox${colorPreset}`);
+    const textColor = useThemeColor({}, `textInputColor${colorPreset}`);
+    const outlineColor = useThemeColor({}, `textInputOutline${colorPreset}`);
 
-    const color = useThemeColor({}, themeColor);
-    const textColor = useThemeColor({}, themeColorText);
-    const outlineColor = useThemeColor({}, themeColorOutline);
 
     return (
-        <View style={[styles.container, {
+        <View style={[styles.container, style, {
             backgroundColor: color,
             borderColor: outlineColor,
             borderWidth: outlineWidth || 0,
@@ -39,6 +39,8 @@ export function ThemedTextInput({ style, code, icon, title, outlineWidth, themeC
             <IconSymbol name={icon} size={30} color={textColor}/>
             <TextInput
                 style={[styles.text, {color: textColor}]}
+                
+                scrollEnabled={true}
                 placeholder={title}
                 placeholderTextColor={textColor}
                 value={text}
@@ -53,19 +55,22 @@ export function ThemedTextInput({ style, code, icon, title, outlineWidth, themeC
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: '100%',
         flexDirection: 'row',
+        padding: 30,
         paddingHorizontal: 15,
         gap: 15,
         justifyContent: 'flex-start',
         alignItems: 'center',
         borderRadius: 16,
         height: 60,
-        maxHeight: 60
+        maxHeight: 60,
     },
     text: {
-        width: '100%',
+        flexGrow: 1,
+        flex: 1,
+        height: 60,
         fontFamily: 'Comfortaa',
         fontWeight: '700',
-        justifyContent: 'center',
     },
 });
