@@ -50,12 +50,17 @@ const styles = StyleSheet.create({
         height: 45,
         alignItems: 'center',
         flexDirection: 'row',
+
+        textOverflow: 'scroll',
+        overflow: 'hidden',
+
         backgroundColor: "#B785EAFF",
         borderWidth: 1,
         borderColor: "#D1ACF6FF",
         borderRadius: 13,
     },
     text: {
+        flex: 1,
         color: "#FFF",
         fontFamily: 'Comfortaa',
         fontWeight: '900',

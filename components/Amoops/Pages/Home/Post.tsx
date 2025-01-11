@@ -15,14 +15,10 @@ export const Post = memo(function Post({ post, isInView }: PostProps) {
         <TouchableWithoutFeedback>
             <ThemedView style={styles.Container}>
                 <PostMedia post={post} isInView={isInView} />
-                {/* Additional post content LIKE DEBUG 
-                
+                {/* Additional post content LIKE DEBUG */}
                 <DebugWidget data={
                     post.date + ": " + post.id
                 }/>
-                
-                */}
-                
             </ThemedView>
         </TouchableWithoutFeedback>
     );
