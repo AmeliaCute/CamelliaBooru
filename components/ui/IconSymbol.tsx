@@ -14,9 +14,11 @@ import {
   UserCircleIcon,
   LockClosedIcon,
   CheckCircleIcon,
+  XMarkIcon,
 } from "react-native-heroicons/outline"; // Import desired icons
 
 const HEROICONS_MAPPING = {
+  'xmark.circle': XMarkIcon,
   'house.fill': HomeIcon,
   'folder': FolderIcon,
   'plus.square.on.square': PlusCircleIcon,

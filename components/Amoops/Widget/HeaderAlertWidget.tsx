@@ -1,22 +1,24 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, type ViewProps } from 'react-native';
 import { ImageSourcePropType } from 'react-native';
-import { BaseButtonProps } from '../Common/BaseButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
+import { BaseButtonProps } from '../Buttons/Common/BaseButton';
 
 export type AccountButtonProps = BaseButtonProps & {
-    accountName?: string;
-    accountImage?: ImageSourcePropType;
+    icon: IconSymbolName,
+    info: string
 };
 
-export function AccountButton({ style, code, accountName, accountImage, ...otherProps }: AccountButtonProps) {
+export function HeaderAlertWidget({ style, code, icon, info }: AccountButtonProps) {
     const containerColor = useThemeColor({}, 'background');
-    const textColor = useThemeColor({}, 'text');    
+    const textColor = useThemeColor({}, 'text');   
+    const red = useThemeColor({}, 'red');
 
     return (
-        <TouchableOpacity onPress={code} style={{ height: 45 }}>
+        <TouchableOpacity onPress={code} style={{ paddingHorizontal: 10, marginBottom: 5, height: 45 }}>
             <View style={[styles.container, {backgroundColor: containerColor}]}>
-                <Image source={accountImage} style={styles.profileImage} />
-                <Text style={[styles.text, {color: textColor}]}>{accountName}</Text>
+                <IconSymbol name={icon} style={styles.profileImage} color={red} />
+                <Text style={[styles.text, {color: textColor}]}>{info}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -27,7 +29,7 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: 10,
         paddingHorizontal: 12,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'row',
         backgroundColor: "#FFFFFFFF",
@@ -40,7 +42,6 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 30,
         height: 30,
-        borderRadius: 60,
     },
     text: {
         color: "#000",

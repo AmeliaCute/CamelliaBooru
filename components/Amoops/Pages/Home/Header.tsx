@@ -5,13 +5,12 @@ import { AccountButton } from "../../Buttons/(tabs)/AccountButton";
 import { CategoriesButton } from "../../Buttons/(tabs)/CategoriesButton";
 import Globals from "@/constants/Globals";
 import { toJS } from "mobx";
-import { baseHeaderstyles } from "../Common/BaseHeader";
+import { baseHeaderstyles, CommonHeaderProps } from "../Common/BaseHeader";
+import { useRouter } from "expo-router";
 
-type Home_HeaderProps = {
-    onServerChange: (newServer: Server) => void;
-};
+export function Home_Header({ onServerChange }: CommonHeaderProps) {
+    const router = useRouter();
 
-export function Home_Header({ onServerChange }: Home_HeaderProps) {
     return (
         <View style={baseHeaderstyles.header}>
             <View style={baseHeaderstyles.accountContent}>
@@ -33,9 +32,8 @@ export function Home_Header({ onServerChange }: Home_HeaderProps) {
                     ) : null)}
                     
                     <CategoriesButton 
-                        //code={addServer}
                         code={async () => {
-                            Globals.addServer(new Server("gelbooru", "New Server", "https://gelbooru.com"));
+                            router.push('/parameters/ServerRegister');
                         }}
                         key={"addserver"} 
                         icon="plus.square.on.square"

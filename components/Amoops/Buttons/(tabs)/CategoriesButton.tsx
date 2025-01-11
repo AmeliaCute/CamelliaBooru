@@ -3,6 +3,7 @@ import * as Haptics from 'expo-haptics';
 
 import { IconSymbol, IconSymbolName } from '../../../ui/IconSymbol';
 import { BaseButtonProps } from '../Common/BaseButton';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export function CategoriesButton({ style, code, icon = "folder", title, Haptic = Haptics.ImpactFeedbackStyle.Medium, iconIsImage = false, ...otherProps }: BaseButtonProps) {
     const runner = () => {
@@ -11,18 +12,21 @@ export function CategoriesButton({ style, code, icon = "folder", title, Haptic =
         code(); 
     };
 
+    const backgroundColor = useThemeColor({}, 'headerObjectBackground');
+    const borderColor = useThemeColor({}, 'headerObjectBorder');
+    const text = useThemeColor({}, 'background');
 
     return (
         <TouchableOpacity onPress={runner} style={{ height: 45 }}>
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: backgroundColor, borderColor: borderColor}]}>
                 { iconIsImage ? ( 
                         <Image
                             source={{ uri: icon }}
-                            style={styles.image}
+                            style={[styles.image, {borderColor: borderColor}]}
                         />
                     ): 
                     (
-                        <IconSymbol name={icon as IconSymbolName} size={30} color={"#FFF"} />  
+                        <IconSymbol name={icon as IconSymbolName} size={30} color={'#FFF'} />  
                     )
                 }
                 {title ? (
@@ -41,10 +45,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
-        backgroundColor: "#B785EAFF",
         borderWidth: 1,
-        borderColor: "#D1ACF6FF",
         borderRadius: 13,
+        
+      
     },
     text: {
         color: "#FFF",
@@ -58,6 +62,9 @@ const styles = StyleSheet.create({
 
         borderRadius: 6.5,
         borderWidth: 2,
-        borderColor: "#FFF"
+
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2.5 },
     }
 });

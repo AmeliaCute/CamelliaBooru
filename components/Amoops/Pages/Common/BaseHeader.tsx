@@ -2,7 +2,7 @@ import{ ReactNode } from "react"
 import { StyleSheet } from "react-native"
 import { Server } from "@/modules/Server"
 
-type CommonHeaderProps = {
+export type CommonHeaderProps = {
     onServerChange: (newServer: Server) => void;
     children?: ReactNode;
 };
@@ -11,12 +11,12 @@ export const baseHeaderstyles = StyleSheet.create({
     header: {
         width: "100%",
         height: "auto",
-        paddingVertical: 10,
+        paddingTop: 10,
+        paddingBottom: 15,
         gap: 10,
         display: 'flex',
         justifyContent: 'flex-end',
-        flexDirection: 'column',
-        backgroundColor: "#A670DCFF"
+        flexDirection: 'column'
     },
     accountContent: {
         width: "100%",

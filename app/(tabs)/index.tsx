@@ -10,6 +10,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import { Server } from '@/modules/Server';
 import { observer } from 'mobx-react';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { HeaderAlertWidget } from '@/components/Amoops/Widget/HeaderAlertWidget';
 
 const ObservedHomeHeader = observer(Home_Header);
 
@@ -19,6 +21,7 @@ export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [viewablePost, setViewablePost] = useState(new Set<string>());
   const flatListRef = useRef<FlatList<Content>>(null);
+  const backgroundColor = useThemeColor({}, 'headerBackground');
   
   useFocusEffect(
     useCallback(() => {
@@ -72,7 +75,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <ThemedView style={{backgroundColor: "#A670DCFF"}}>
+    <ThemedView style={{backgroundColor: backgroundColor}}>
       <FlatList
         ref={flatListRef}
         data={posts}
@@ -87,7 +90,7 @@ export default function HomeScreen() {
         viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
 
         ListHeaderComponent={<ObservedHomeHeader onServerChange={handleServerChange}/>}
-        ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
+        ListEmptyComponent={isLoading ? <HeaderAlertWidget icon={'magnifyingglass'} info={'Loading..'}/> : <HeaderAlertWidget icon={'xmark.circle'} info={'No posts available'}/>}
 
         showsVerticalScrollIndicator={false}
       />

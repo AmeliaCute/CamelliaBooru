@@ -24,7 +24,12 @@ export const Colors = {
     textInputColorNormal: '#838383',
     textInputOutlineNormal: '#B4B4B4',
 
-  
+    headerBackground: "#A670DCFF",
+
+    headerObjectBackground: "#B785EAFF",
+    headerObjectBorder: "#D1ACF6FF",
+
+    red: "#DF5050FF",
   },
   dark: {
     text: '#ECEDEE',
@@ -42,5 +47,12 @@ export const Colors = {
     textInputBoxNormal: '#2D2D2D',
     textInputColorNormal: '#C2C2C2',
     textInputOutlineNormal: '#8E8E8E',
+
+    headerBackground: "#7836BF",
+
+    headerObjectBackground: "#8E55CC",
+    headerObjectBorder: "#A473D8",
+
+    red: "#B34141FF",
   },
 };

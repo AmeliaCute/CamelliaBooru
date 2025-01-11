@@ -2,21 +2,21 @@ import React, { useState } from "react"
 import { Server } from "@/modules/Server"
 import { HeaderTextInput } from "../../Buttons/(tabs)/HeaderTextInput"
 import { ScrollView, StyleSheet, View } from "react-native"
-import { baseHeaderstyles } from "../Common/BaseHeader";
+import { baseHeaderstyles, CommonHeaderProps } from "../Common/BaseHeader";
 import { AccountButton } from "../../Buttons/(tabs)/AccountButton";
 import { toJS } from "mobx";
 import Globals from "@/constants/Globals";
 import { CategoriesButton } from "../../Buttons/(tabs)/CategoriesButton";
+import { useNavigation, useRouter } from "expo-router";
 
 //todo: use base header and inject onSearch 
-type Explore_HeaderProps = {
-    onServerChange: (newServer: Server) => void;
+type Explore_HeaderProps = CommonHeaderProps & {
     onSearch: (query: string) => void;
 };
 
 export function Explore_Header({ onServerChange, onSearch }: Explore_HeaderProps) {
     const [searchQuery, setSearchQuery] = useState('');
-
+    const router = useRouter();
 
     const handleSearchChange = (text: string) => {
         console.log(searchQuery)
@@ -45,9 +45,8 @@ export function Explore_Header({ onServerChange, onSearch }: Explore_HeaderProps
                     ) : null)}
                     
                     <CategoriesButton 
-                        //code={addServer}
                         code={async () => {
-                            Globals.addServer(new Server("gelbooru", "New Server", "https://gelbooru.com"));
+                            router.push('/parameters/ServerRegister');
                         }}
                         key={"addserver"} 
                         icon="plus.square.on.square"

@@ -25,7 +25,9 @@ export function ThemedParameterButton({ style, code, icon = 'folder', title, out
             shadowColor: outlineColor,
             shadowRadius: 0,
             shadowOpacity: shadowOpacity || 0
-        }]}>
+        }]}
+        onPressOut={code}
+        >
             <IconSymbol name={icon as IconSymbolName} size={30} color={textColor}/>
             <Text style={[styles.text, {color: textColor}]}> {title} </Text>
         </TouchableOpacity>

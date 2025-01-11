@@ -2,12 +2,16 @@ import { ThemedParameterButton } from "@/components/Amoops/Buttons/Parameters/Th
 import { ThemedTextInput } from "@/components/Amoops/Buttons/Parameters/ThemedTextInput";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import Globals from "@/constants/Globals";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Server } from "@/modules/Server";
+import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
-import { HeartIcon } from "react-native-heroicons/outline";
+import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
 
 export default function ServerRegister() {
+    const router = useRouter();
+
     return (
         <ThemedView style={styles.formcontainer}>
             <ThemedTextInput 
@@ -56,6 +60,13 @@ export default function ServerRegister() {
             </KeyboardAvoidingView>
                 
             <ThemedParameterButton 
+                code={
+                    async () => {
+                        // wip func 
+                        await Globals.addServer(new Server("gelbooru", "New Server", "https://gelbooru.com"));
+                        router.back();
+                    }
+                }
                 outlineWidth={2} 
                 colorPreset='Important'
                 title="Register Server"

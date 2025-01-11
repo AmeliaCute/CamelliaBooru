@@ -2,6 +2,7 @@ import { Button, TouchableOpacity, View, StyleSheet, Text, type ViewProps, TextI
 
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
 import { useState } from 'react';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextInputProps = TextInputProps & {
     code?: () => void;
@@ -19,9 +20,11 @@ export type ThemedTextInputProps = TextInputProps & {
 
 export function HeaderTextInput({ style, code, icon = 'folder', title, outlineWidth, themeColor, themeColorText, themeColorOutline, shadowOpacity, onSearch = () => {}, ...otherProps }: ThemedTextInputProps) {
     const [text, setText] = useState('');
+    const backgroundColor = useThemeColor({}, 'headerObjectBackground');
+    const borderColor = useThemeColor({}, 'headerObjectBorder');
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: backgroundColor, borderColor: borderColor}]}>
             <IconSymbol name={icon} size={30} color={"#FFF"}/>
             <TextInput
                 style={styles.text}

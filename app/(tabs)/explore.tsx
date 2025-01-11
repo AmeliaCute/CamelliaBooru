@@ -10,6 +10,8 @@ import { useFocusEffect, useNavigation } from 'expo-router';
 import { Server } from '@/modules/Server';
 import { Explore_Header } from '@/components/Amoops/Pages/Explore/Header';
 import { observer } from 'mobx-react';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { HeaderAlertWidget } from '@/components/Amoops/Widget/HeaderAlertWidget';
 
 const ObservedExploreHeader = observer(Explore_Header);
 
@@ -21,6 +23,7 @@ export default function ExploreScreen() {
   const [viewablePost, setViewablePost] = useState(new Set<string>());
   const flatListRef = useRef<FlatList<Content>>(null);
   const [query, setQuery] = useState('');
+  const backgroundColor = useThemeColor({}, 'headerBackground');
   
   useFocusEffect(
     useCallback(() => {
@@ -88,7 +91,7 @@ export default function ExploreScreen() {
 
 
   return (
-    <ThemedView style={{backgroundColor: "#A670DCFF"}}>
+    <ThemedView style={{backgroundColor: backgroundColor}}>
       <FlatList
       ref={flatListRef}
       data={posts}
@@ -113,8 +116,8 @@ export default function ExploreScreen() {
         }
       }}
       ListHeaderComponent={() => <ObservedExploreHeader onServerChange={handleServerChange} onSearch={handleSearch} />}
+      ListEmptyComponent={isLoading ? <HeaderAlertWidget icon={'magnifyingglass'} info={'Loading..'}/> : <HeaderAlertWidget icon={'xmark.circle'} info={'No posts available'}/>}
 
-      ListEmptyComponent={isLoading ? <ThemedText>Loading...</ThemedText> : <ThemedText>No posts available</ThemedText>}
 
       showsVerticalScrollIndicator={false}
       />

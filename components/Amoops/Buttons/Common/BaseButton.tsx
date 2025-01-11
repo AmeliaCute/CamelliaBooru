@@ -35,7 +35,8 @@ export function BaseButton({ style, code, icon = 'folder', iconIsImage = false, 
                 shadowRadius: 0,
                 shadowOpacity: shadowOpacity || 0,
             }]}>
-                { iconIsImage ? ( 
+                { iconIsImage ? 
+                    ( 
                         <Image source={{uri: icon}} style={
                             { borderRadius: 13, resizeMode: 'cover', width: 30, height: 30 
                                 
