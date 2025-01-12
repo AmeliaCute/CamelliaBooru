@@ -1,5 +1,4 @@
 import { makeAutoObservable, action, runInAction } from "mobx";
-import * as SecureStore from 'expo-secure-store'
 import { Server } from "@/modules/Server";
 import { User } from "./Amoops";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -50,6 +49,7 @@ class GlobalsT {
                     ));
 
                     if(this.server.length === 0) return;
+                    
                     if (this.server.some((s: Server) => s.isdefault)) {
                         this.currentServer = this.server.find((s: Server) => s.isdefault);
                     } else {

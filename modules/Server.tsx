@@ -1,4 +1,5 @@
 import { Content } from "./Content";
+import { XMLParser } from 'fast-xml-parser'
 
 export class Server {
     type:   'gelbooru' | 'amoops';
@@ -8,7 +9,7 @@ export class Server {
     id?:    string;
 
     icon?:  string;
-    tagsAvaible?: string[];
+    tagsAvaible?: string[] = [];
     
     // used for random content
     valid?: boolean;
@@ -26,11 +27,13 @@ export class Server {
         if(type === 'gelbooru')
         {
             this.gelbooru_latest_offset = 0;
+            this.gelbooru_explore_offset = 0;
         }
 
         if (key) this.key = key;
         if (id) this.id = id;
         
+        this.tagsAvaible = [];
     }
 
     async load() {
@@ -59,6 +62,7 @@ export class Server {
             this.gelbooru_latest_offset = 0;
 
             await this.gelbooru_getIcon();
+            //await this.gelbooru_getTags("kis");
 
             return true;
         } else {
@@ -78,6 +82,91 @@ export class Server {
             console.log("Error fetching favicon:", error);
         }
     }
+
+    // Probably missing something here DO NOT USE THIS
+    private async gelbooru_getTags(prefix: string) {
+        const tagsAvaible: string[] = [];
+        let page = 0;
+        let hasMore = true;
+        
+        const parser = new XMLParser();
+        
+        try {
+            while (hasMore) {
+                const response = await fetch(
+                    `${this.url}/index.php?page=dapi&s=tag&q=index&name_pattern=${prefix}%&pid=${page}`
+                );
+        
+                if (response.ok) {
+                    const contentType = response.headers.get('Content-Type')?.toLowerCase();
+                    const responseText = await response.text();
+
+                    if (contentType && contentType.includes('application/json')) {
+                        try {
+                            const tags = JSON.parse(responseText).tag;
+                            if (tags?.length > 0) {
+                                tagsAvaible.push(tags.map((tag: any) => tag.name));
+                                page++;
+                            } else {
+                                hasMore = false;
+                            }
+                        } catch (jsonError) {
+                            console.error("Error parsing JSON:", jsonError);
+                            hasMore = false;
+                        }
+        
+                    } else if (contentType && (contentType.includes('application/xml') || contentType.includes('<?xml version="1.0"?>') || contentType.includes('text/xml;charset=utf-8'))) {
+                        try {
+                            const jsonObj = parser.parse(responseText);
+
+                            if (jsonObj?.tags) {
+                                const tagsArray = jsonObj.tags.tag ? 
+                                    (Array.isArray(jsonObj.tags.tag) ? jsonObj.tags.tag : [jsonObj.tags.tag]) 
+                                    : [];
+        
+                                tagsArray.forEach((tag: any) => {
+                                    tagsAvaible.push(tag.name);
+                                });
+
+                                
+                                console.log(tagsArray);
+                                page++;
+                            }
+                            else if (jsonObj?.tag) {
+                                const tagsArray = jsonObj.tag.tag ? 
+                                    (Array.isArray(jsonObj.tag.tag) ? jsonObj.tag.tag : [jsonObj.tag.tag]) 
+                                    : []; 
+        
+                                tagsArray.forEach((tag: any) => {
+                                    tagsAvaible.push(tag.name);
+                                });
+
+                                page++;
+                            } else {
+                                hasMore = false;
+                            }
+                        } catch (xmlError) {
+                            console.error("Error parsing XML:", xmlError);
+                            hasMore = false;
+                        }
+                    } else {
+                        console.error('Unexpected response format:', contentType, this.name);
+                        hasMore = false;
+                    }
+                } else {
+                    console.error('Failed to fetch tags:', response.status, this.name);
+                    hasMore = false;
+                }
+            }
+        
+            this.tagsAvaible = tagsAvaible;
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    }
+    
+    
+    
     async gelbooru_getPost(id: number) {
         const response = await fetch(
             `${this.url}/index.php?page=dapi&s=post&q=index&id=${id}&json=1`
