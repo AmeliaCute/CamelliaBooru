@@ -3,7 +3,6 @@ import { Content } from "@/modules/Content";
 import { memo } from "react";
 import { StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { PostMedia } from "./PostMedia";
-import { DebugWidget } from "../../Widget/DebugWidget";
 
 export type PostProps = {
     post: Content
