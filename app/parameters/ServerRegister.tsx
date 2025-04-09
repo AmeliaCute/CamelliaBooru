@@ -2,9 +2,7 @@ import { ThemedParameterButton } from "@/components/Amoops/Buttons/Parameters/Th
 import { ThemedTextInput } from "@/components/Amoops/Buttons/Parameters/ThemedTextInput";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import Globals from "@/constants/Globals";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Server } from "@/modules/Server";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
@@ -63,7 +61,7 @@ export default function ServerRegister() {
                 code={
                     async () => {
                         // wip func 
-                        await Globals.addServer(new Server("gelbooru", "New Server", "https://gelbooru.com"));
+                        
                         router.back();
                     }
                 }

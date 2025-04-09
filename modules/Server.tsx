@@ -62,7 +62,6 @@ export class Server {
             this.gelbooru_latest_offset = 0;
 
             await this.gelbooru_getIcon();
-            //await this.gelbooru_getTags("kis");
 
             return true;
         } else {
@@ -201,11 +200,11 @@ export class Server {
             const data = await response.json();
             if (Array.isArray(data)) {
                 const posts: Content[] = data.map(post => Content.parse_gelbooru_post(post));
-                this.gelbooru_latest_offset += limit;
+                this.gelbooru_latest_offset ++;
                 return posts;
             } else if (data && data.post) {
                 const posts: Content[] = data.post.map((post: any) => Content.parse_gelbooru_post(post));
-                this.gelbooru_latest_offset += limit; 
+                this.gelbooru_latest_offset ++; 
                 return posts;
             } else {
                 throw new Error('Fetched data is not an array');
@@ -228,12 +227,12 @@ export class Server {
             if (Array.isArray(data)) {
                 const posts: Content[] = data.map(post => Content.parse_gelbooru_post(post));
     
-                this.gelbooru_explore_offset += limit;
+                this.gelbooru_explore_offset ++;
                 return posts;
             } else if (data && data.post) {
                 const posts: Content[] = data.post.map((post: any) => Content.parse_gelbooru_post(post));
 
-                this.gelbooru_explore_offset += limit; 
+                this.gelbooru_explore_offset ++; 
                 return posts;
             } else {
                 console.error('Fetched data is not an array');
