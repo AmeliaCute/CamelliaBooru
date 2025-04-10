@@ -2,7 +2,7 @@ import { Content } from "./Content";
 import { XMLParser } from 'fast-xml-parser'
 
 export class Server {
-    type:   'gelbooru' | 'amoops';
+    type:   'gelbooru2.0'  | 'gelbooru2.5' | 'amoops';
     name:   string;
     url:    string;
     key?:   string;
@@ -18,28 +18,26 @@ export class Server {
     gelbooru_latest_offset: number = 0;
     gelbooru_explore_offset: number = 0;
 
-    constructor (type: 'gelbooru' | 'amoops', name: string, url: string, key?: string , id?: string, isdefault?: boolean) {
-        this.type = type;
+    constructor (stype: 'gelbooru2.0'  | 'gelbooru2.5' | 'amoops', name: string, url: string, key?: string , id?: string, isdefault?: boolean) {
+        this.type = stype;
         this.name = name;
         this.url = url;
         this.isdefault = isdefault;
 
-        if(type === 'gelbooru')
-        {
-            this.gelbooru_latest_offset = 0;
-            this.gelbooru_explore_offset = 0;
-        }
-
         if (key) this.key = key;
         if (id) this.id = id;
-        
         this.tagsAvaible = [];
+
+        if(stype !== 'amoops') return;
+
+        this.gelbooru_latest_offset = 0;
+        this.gelbooru_explore_offset = 0;
     }
 
     async load() {
         switch (this.type) {
-            case 'gelbooru':
-                return await this.gelbooru_load();
+            case 'gelbooru2.0':
+                return await this.gelbooru20_load();
             case 'amoops':
                 return this.amoops_load();
             default:
@@ -53,7 +51,7 @@ export class Server {
         console.log("Loading Amoops server...");
     }
 
-    private async gelbooru_load() {
+    private async gelbooru20_load() {
         const response = await fetch(`${this.url}/index.php?page=dapi&s=post&q=index&json=1&limit=1`);
         if (response.ok) {
             console.log("Loading Gelbooru server... [", this.name, "]");
@@ -69,7 +67,6 @@ export class Server {
             return false;
         }
     }
-
     private async gelbooru_getIcon() {
         try {
             const response = await fetch(`${this.url}/favicon.ico`);
@@ -83,7 +80,7 @@ export class Server {
     }
 
     // Probably missing something here DO NOT USE THIS
-    private async gelbooru_getTags(prefix: string) {
+    private async gelbooru20_getTags(prefix: string) {
         const tagsAvaible: string[] = [];
         let page = 0;
         let hasMore = true;
@@ -164,9 +161,7 @@ export class Server {
         }
     }
     
-    
-    
-    async gelbooru_getPost(id: number) {
+    async gelbooru20_getPost(id: number) {
         const response = await fetch(
             `${this.url}/index.php?page=dapi&s=post&q=index&id=${id}&json=1`
         );
@@ -177,7 +172,7 @@ export class Server {
         }
     }
 
-    async gelbooru_getLatestPost() {
+    async gelbooru20_getLatestPost() {
         const response = await fetch(
             `${this.url}/index.php?page=dapi&s=post&q=index&json=1&limit=1`
         );
@@ -189,7 +184,7 @@ export class Server {
         }
     }
 
-    async gelbooru_getLatestsPosts(limit: number) {
+    async gelbooru20_getLatestsPosts(limit: number) {
         const offset = this.gelbooru_latest_offset;
         console.log(offset)
         
@@ -213,7 +208,7 @@ export class Server {
             throw new Error('Failed to fetch latest posts');
         }
     }
-    async gelbooru_searchPosts(tags: string, limit = 10) {
+    async gelbooru20_searchPosts(tags: string, limit = 10) {
      
         const offset = this.gelbooru_explore_offset;
         console.log(offset)
