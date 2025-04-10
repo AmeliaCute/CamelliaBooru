@@ -76,7 +76,8 @@ class GlobalsT {
                 this.server.push(server);
             });
             await this.saveServers();
-        }
+        } else
+            console.error("failed to load: ", server); 
     }
 }
 

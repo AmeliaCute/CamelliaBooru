@@ -44,6 +44,7 @@
     "react-native": "0.76.5",
     "react-native-async-storage": "^0.0.1",
     "react-native-autocomplete-input": "^5.5.5",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-fast-image": "^8.6.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.20.2",

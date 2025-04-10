@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         height: 60,
         maxHeight: 60,
     },
-    text: {
+        text: {
         flexGrow: 1,
         flex: 1,
         height: 60,

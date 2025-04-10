@@ -9,7 +9,6 @@ import Globals from "@/constants/Globals";
 import { CategoriesButton } from "../../Buttons/(tabs)/CategoriesButton";
 import { useNavigation, useRouter } from "expo-router";
 
-//todo: use base header and inject onSearch 
 type Explore_HeaderProps = CommonHeaderProps & {
     onSearch: (query: string) => void;
 };
